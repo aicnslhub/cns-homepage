@@ -12,5 +12,4 @@ const Footer = ({ isDarkMode }) => {
     </footer>
   );
 };
-
 export default Footer;
