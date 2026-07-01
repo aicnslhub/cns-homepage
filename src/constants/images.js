@@ -1,4 +1,4 @@
-import reactLogo from '../assets/react.svg';
+import logoIcon from '../assets/long.png';
 
 export const IMAGES = {
   logo: reactLogo,
