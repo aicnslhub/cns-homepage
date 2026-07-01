@@ -17,11 +17,12 @@
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.23.0",
+    "@aws-amplify/backend-cli": "^1.8.3",
     "@eslint/js": "^10.0.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "autoprefixer": "^10.5.0",   
+    "autoprefixer": "^10.5.0",
     "esbuild": "^0.28.1",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
@@ -34,7 +35,7 @@
     "vite": "^8.0.12"
   },
   "overrides": {
-  "@aws-amplify/plugin-types": "1.12.1",
-  "@aws-cdk/toolkit-lib": "1.19.0"
+    "@aws-amplify/plugin-types": "1.12.1",
+    "@aws-cdk/toolkit-lib": "1.19.0"
   }
 }
