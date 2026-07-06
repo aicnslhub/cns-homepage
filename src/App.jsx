@@ -3,11 +3,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 import ProtectedRoute from './components/ProtectedRoute';
 
-import Home from './pages/Home';
-import About from './pages/About';
-import Products from './pages/Products';
-import Inquiry from './pages/Inquiry';
-
 import Login from './pages/Login';
 
 import AppLogin from './pages/app/AppLogin';
@@ -22,53 +17,13 @@ const App = () => {
 
   return (
     <Routes>
-      {/* 공개 홈페이지 */}
+      {/* 처음 접속하면 웹 로그인으로 이동 */}
       <Route
         path="/"
-        element={<Navigate to="/home" replace />}
+        element={<Navigate to="/login" replace />}
       />
 
-      <Route
-        path="/home"
-        element={
-          <Home
-            isDarkMode={isDarkMode}
-            setIsDarkMode={setIsDarkMode}
-          />
-        }
-      />
-
-      <Route
-        path="/about"
-        element={
-          <About
-            isDarkMode={isDarkMode}
-            setIsDarkMode={setIsDarkMode}
-          />
-        }
-      />
-
-      <Route
-        path="/products"
-        element={
-          <Products
-            isDarkMode={isDarkMode}
-            setIsDarkMode={setIsDarkMode}
-          />
-        }
-      />
-
-      <Route
-        path="/inquiry"
-        element={
-          <Inquiry
-            isDarkMode={isDarkMode}
-            setIsDarkMode={setIsDarkMode}
-          />
-        }
-      />
-
-      {/* 웹 관리자 로그인 */}
+      {/* 웹 로그인 */}
       <Route
         path="/login"
         element={
@@ -79,7 +34,7 @@ const App = () => {
         }
       />
 
-      {/* 웹 관리자 페이지 */}
+      {/* 웹 관리자 3페이지 */}
       <Route
         element={
           <ProtectedRoute
@@ -143,7 +98,7 @@ const App = () => {
         }
       />
 
-      {/* 앱 녹음 화면 */}
+      {/* 앱 녹음 화면: admin, recorder 모두 접근 가능 */}
       <Route
         element={
           <ProtectedRoute
@@ -165,7 +120,7 @@ const App = () => {
         />
       </Route>
 
-      {/* 앱 관리자 페이지 */}
+      {/* 앱 관리자 3페이지: app admin만 접근 가능 */}
       <Route
         element={
           <ProtectedRoute
@@ -213,10 +168,9 @@ const App = () => {
         />
       </Route>
 
-      {/* 없는 주소는 공개 홈페이지로 이동 */}
       <Route
         path="*"
-        element={<Navigate to="/home" replace />}
+        element={<Navigate to="/login" replace />}
       />
     </Routes>
   );
