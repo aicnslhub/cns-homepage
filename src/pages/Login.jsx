@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Login = ({ isDarkMode, setIsDarkMode }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [userId, setUserId] = useState('admin');
   const [password, setPassword] = useState('1234');
@@ -15,12 +16,13 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
     const trimmedPassword = password.trim();
 
     if (trimmedUserId === 'admin' && trimmedPassword === '1234') {
+      localStorage.setItem('cns_web_login', 'true');
       localStorage.setItem('cns_web_role', 'admin');
 
-      // 예전 공용 role 제거
       localStorage.removeItem('cns_user_role');
 
-      navigate('/admin', { replace: true });
+      const redirectPath = location.state?.from || '/admin';
+      navigate(redirectPath, { replace: true });
       return;
     }
 
@@ -89,7 +91,10 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
               <input
                 type="text"
                 value={userId}
-                onChange={(e) => setUserId(e.target.value)}
+                onChange={(e) => {
+                  setUserId(e.target.value);
+                  setError('');
+                }}
                 placeholder="admin"
                 autoCapitalize="none"
                 autoComplete="username"
@@ -109,7 +114,10 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
               <input
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError('');
+                }}
                 placeholder="1234"
                 autoComplete="current-password"
                 className={`w-full min-h-12 rounded-xl px-4 border outline-none text-base ${
