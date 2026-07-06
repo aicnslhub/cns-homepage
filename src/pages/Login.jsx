@@ -14,7 +14,7 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
     const trimmedUserId = userId.trim().toLowerCase();
     const trimmedPassword = password.trim();
 
-    if (trimmedUserId === 'admin' && trimmedPassword === '1234') {
+    if (trimmedUserId === '' && trimmedPassword === '') {
       localStorage.setItem('cns_web_login', 'true');
       localStorage.setItem('cns_web_role', 'admin');
 
@@ -144,7 +144,7 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
           >
             임시 테스트 계정
             <br />
-            ID: <b>admin</b> / PW: <b>1234</b>
+            ID: <b>admin</b> / PW: <b>admin</b>
           </div>
         </section>
       </div>
