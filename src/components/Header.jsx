@@ -40,9 +40,13 @@ const Header = ({ isDarkMode, setIsDarkMode }) => {
         </div>
 
         <div className="flex items-center gap-3 shrink-0 ml-auto">
-          <button 
-            onClick={() => alert("관제실 로그인 페이지로 이동합니다.")} 
-            className={`px-4 py-2 rounded-xl font-bold text-sm transition whitespace-nowrap ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-black'}`}
+          <button
+            onClick={() => navigate('/login')}
+            className={`px-4 py-2 rounded-xl font-bold text-sm transition whitespace-nowrap ${
+              isDarkMode
+                ? 'text-gray-300 hover:text-white'
+                : 'text-gray-700 hover:text-black'
+            }`}
           >
             로그인
           </button>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNS 통합 관리 시스템 - 전체보기</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #1c1c1e;
+            --card-hover: #2c2c2e;
+            --text-main: #ffffff;
+            --text-sub: #8e8e93;
+            --accent-red: #ff3b30;
+            --accent-yellow: #ffcc00;
+            --accent-green: #34c759;
+            --primary-blue: #0a84ff;
+            --border-color: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px; /* 데스크탑/태블릿 최적화 */
+            padding-bottom: 50px;
+        }
+
+        /* 1. 상단 타이틀 영역 */
+        .header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .header h1 { margin: 0 0 5px; font-size: 1.8rem; }
+        .header p { margin: 0; color: var(--text-sub); font-size: 0.95rem; }
+
+        /* 2. 종합 상태 요약 (System Health KPI) */
+        .stat-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            padding: 20px 10px;
+            border-radius: 15px;
+            text-align: center;
+            border-bottom: 4px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .stat-card.red { border-color: var(--accent-red); }
+        .stat-card.yellow { border-color: var(--accent-yellow); }
+        .stat-card.green { border-color: var(--accent-green); }
+        
+        .stat-num { font-size: 2.2rem; font-weight: bold; display: block; margin-bottom: 5px; }
+        .stat-label { font-size: 0.85rem; color: var(--text-sub); font-weight: bold; }
+
+        /* 3. 스마트 검색 및 필터링 */
+        .controls-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 15px;
+        }
+        .search-row { display: flex; gap: 10px; }
+        .search-bar {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #000;
+            color: white;
+            font-size: 1rem;
+        }
+        .filter-row { display: flex; justify-content: space-between; align-items: center; }
+        .filter-title { font-size: 1.1rem; font-weight: bold; }
+        .sort-select {
+            background: #3a3a3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        /* 4. 통합 내담자 리스트 */
+        .client-list { display: flex; flex-direction: column; gap: 15px; }
+
+        .client-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-left: 6px solid transparent; 
+            transition: transform 0.2s, background 0.2s;
+        }
+        .client-card:hover { background: var(--card-hover); transform: translateX(5px); }
+        
+        /* 상태별 라인 컬러 */
+        .status-red { border-left-color: var(--accent-red); }
+        .status-yellow { border-left-color: var(--accent-yellow); }
+        .status-green { border-left-color: var(--accent-green); }
+
+        /* 카드 내부 레이아웃 */
+        .card-top { display: flex; justify-content: space-between; align-items: center; }
+        .profile { display: flex; align-items: center; gap: 12px; }
+        .status-dot { width: 14px; height: 14px; border-radius: 50%; }
+        .name { font-size: 1.2rem; font-weight: bold; }
+        .id { font-family: monospace; color: var(--text-sub); font-size: 0.9rem; }
+        
+        .session-info { text-align: right; font-size: 0.85rem; color: var(--text-sub); line-height: 1.5; }
+        
+        .card-mid { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; font-size: 0.9rem; line-height: 1.4; }
+        .ai-tags { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+        .tag { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+        .tag.red { background: rgba(255,59,48,0.2); color: #ff6961; }
+        .tag.yellow { background: rgba(255,204,0,0.2); color: #ffd60a; }
+        .tag.green { background: rgba(52,199,89,0.2); color: #30d158; }
+
+        .card-bottom { display: flex; gap: 10px; margin-top: 5px; }
+        .btn-action {
+            flex: 1; padding: 12px; border-radius: 8px; border: none; cursor: pointer;
+            font-size: 0.9rem; font-weight: bold; text-align: center; text-decoration: none;
+        }
+        .btn-report { background: var(--primary-blue); color: white; }
+        .btn-data { background: #3a3a3c; color: white; }
+
+        .trend-up { color: var(--accent-red); font-weight: bold; font-size: 0.9rem; }
+        .trend-down { color: var(--accent-green); font-weight: bold; font-size: 0.9rem; }
+        
+        /* 푸터 CSS만 살짝 추가 */
+        .admin-footer {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 800px; padding: 15px 20px;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            border-top: 1px solid #333; box-sizing: border-box;
+        }
+        .btn-admin {
+            background: #2c2c2e; color: var(--accent-green); border: 1px solid var(--accent-green);
+            padding: 12px; border-radius: 10px; font-size: 0.9rem;
+            display: block; text-align: center; text-decoration: none; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" style="padding-bottom: 100px;">
+    <div class="header">
+        <h1>📊 전체 내담자 통합 관리</h1>
+        <p>상담사: 이민경 대표 | 시스템 가동 상태: 정상(Edge AI)</p>
+    </div>
+
+    <div class="stat-container">
+        <div class="stat-card red">
+            <span class="stat-num" style="color: var(--accent-red);">2</span>
+            <span class="stat-label">긴급 개입 (위험)</span>
+        </div>
+        <div class="stat-card yellow">
+            <span class="stat-num" style="color: var(--accent-yellow);">12</span>
+            <span class="stat-label">집중 관찰 (주의)</span>
+        </div>
+        <div class="stat-card green">
+            <span class="stat-num" style="color: var(--accent-green);">31</span>
+            <span class="stat-label">안정적 유지</span>
+        </div>
+    </div>
+
+    <div class="controls-wrapper">
+        <div class="search-row">
+            <input type="text" class="search-bar" placeholder="🔍 내담자 이름 또는 ID(예: nec273ai) 검색...">
+        </div>
+        <div class="filter-row">
+            <div class="filter-title">📋 전체 리스트 (총 45명)</div>
+            <select class="sort-select">
+                <option>🚨 위험도 높은 순</option>
+                <option>⏰ 최신 상담 등록순</option>
+                <option>📈 회기 진행 높은 순</option>
+                <option>가나다 순</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="client-list">
+
+        <div class="client-card status-red">
+            <div class="card-top">
+                <div class="profile">
+                    <div class="status-dot" style="background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red);"></div>
+                    <div>
+                        <div class="name">아이작 <span class="trend-up">↑ 악화</span></div>
+                        <div class="id">ID: nec273ai</div>
+                    </div>
+                </div>
+                <div class="session-info">
+                    <strong>3 / 7 회기</strong><br>
+                    04-08 15:30 (방금 전)
+                </div>
+            </div>
+            <div class="card-mid">
+                <div class="ai-tags">
+                    <span class="tag red">#뇌졸중전조_주의</span>
+                    <span class="tag red">#성대긴장_위험</span>
+                </div>
+                <div><strong>AI 요약:</strong> 구음 장애 지표 15% 상승 및 가족 주제 시 불안도 급증. 긴급 모니터링 요망.</div>
+            </div>
+            <div class="card-bottom">
+                <a href="index.html" class="btn-action btn-report">상세 리포트 보기</a>
+                <button class="btn-action btn-data">음성/대화록 다운로드</button>
+            </div>
+        </div>
+
+        <div class="client-card status-yellow">
+            <div class="card-top">
+                <div class="profile">
+                    <div class="status-dot" style="background: var(--accent-yellow);"></div>
+                    <div>
+                        <div class="name">김태형 <span style="color: var(--text-sub); font-size: 0.9rem;">- 유지</span></div>
+                        <div class="id">ID: cns-9921</div>
+                    </div>
+                </div>
+                <div class="session-info">
+                    <strong>1 / 7 회기</strong><br>
+                    04-08 14:00
+                </div>
+            </div>
+            <div class="card-mid">
+                <div class="ai-tags">
+                    <span class="tag yellow">#초기우울_감지</span>
+                    <span class="tag yellow">#번아웃_의심</span>
+                </div>
+                <div><strong>AI 요약:</strong> 발화 에너지가 평균 이하이며 만성 피로 징후 포착. 주의 깊은 라포 형성 필요.</div>
+            </div>
+            <div class="card-bottom">
+                <a href="index.html" class="btn-action btn-report">상세 리포트 보기</a>
+                <button class="btn-action btn-data">음성/대화록 다운로드</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="admin-footer">
+    <a href="admin.html" class="btn-admin">➔ AI 심리 선별검사 리포트</a> 
+    <a href="admin_management.html" class="btn-admin">➔ AI 관제센터</a>
+</div>
+
+</body>
+</html>
