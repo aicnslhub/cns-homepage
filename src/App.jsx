@@ -170,7 +170,7 @@ const App = () => {
 
       <Route
         path="*"
-        element={<Navigate to="/login" replace />}
+        element={<Navigate to="/home" replace />}
       />
     </Routes>
   );
