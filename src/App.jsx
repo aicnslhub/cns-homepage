@@ -233,6 +233,15 @@ const App = () => {
             />
           }
         />
+        <Route
+          path="/register"
+          element={
+            <Register
+              isDarkMode={isDarkMode}
+              setIsDarkMode={setIsDarkMode}
+            />
+          }
+        />
       </Route>
 
       {/* 없는 주소는 홈페이지로 */}

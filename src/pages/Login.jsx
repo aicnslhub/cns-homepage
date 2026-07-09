@@ -145,7 +145,17 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
               {loading ? '로그인 중...' : '로그인'}
             </button>
           </form>
-
+          <button
+            type="button"
+            onClick={() => navigate('/register')}
+            className={`w-full min-h-12 rounded-xl border font-black ${
+              isDarkMode
+                ? 'border-gray-700 text-gray-300'
+                : 'border-gray-300 text-gray-700'
+            }`}
+          >
+            📝 이메일 회원가입
+          </button>
           <div
             className={`mt-6 rounded-2xl p-4 text-xs leading-relaxed ${
               isDarkMode

@@ -76,3 +76,86 @@ export function clearAuthTokens() {
 
   localStorage.removeItem('cns_user_role');
 }
+
+export async function cognitoSignUp(email, password, name = '') {
+  const userAttributes = [
+    {
+      Name: 'email',
+      Value: email.trim(),
+    },
+  ];
+
+  if (name.trim()) {
+    userAttributes.push({
+      Name: 'name',
+      Value: name.trim(),
+    });
+  }
+
+  const response = await fetch(
+    `https://cognito-idp.${CONFIG.REGION}.amazonaws.com/`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-amz-json-1.1',
+        'X-Amz-Target': 'AWSCognitoIdentityProviderService.SignUp',
+      },
+      body: JSON.stringify({
+        ClientId: CONFIG.COGNITO_CLIENT_ID,
+        Username: email.trim(),
+        Password: password,
+        UserAttributes: userAttributes,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    if (data.__type?.includes('UsernameExistsException')) {
+      throw new Error('이미 가입된 이메일입니다.');
+    }
+
+    if (data.__type?.includes('InvalidPasswordException')) {
+      throw new Error('비밀번호 조건이 맞지 않습니다. 대문자, 소문자, 숫자, 특수문자를 포함하세요.');
+    }
+
+    throw new Error(data.message || '회원가입에 실패했습니다.');
+  }
+
+  return data;
+}
+
+export async function cognitoConfirmSignUp(email, code) {
+  const response = await fetch(
+    `https://cognito-idp.${CONFIG.REGION}.amazonaws.com/`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-amz-json-1.1',
+        'X-Amz-Target': 'AWSCognitoIdentityProviderService.ConfirmSignUp',
+      },
+      body: JSON.stringify({
+        ClientId: CONFIG.COGNITO_CLIENT_ID,
+        Username: email.trim(),
+        ConfirmationCode: code.trim(),
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    if (data.__type?.includes('CodeMismatchException')) {
+      throw new Error('인증코드가 올바르지 않습니다.');
+    }
+
+    if (data.__type?.includes('ExpiredCodeException')) {
+      throw new Error('인증코드가 만료되었습니다.');
+    }
+
+    throw new Error(data.message || '이메일 인증에 실패했습니다.');
+  }
+
+  return data;
+}
