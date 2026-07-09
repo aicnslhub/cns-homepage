@@ -8,8 +8,12 @@ const ProtectedRoute = ({
 }) => {
   const location = useLocation();
 
-  const isLoggedIn = localStorage.getItem(requiredKey) === 'true';
-  const role = localStorage.getItem(roleKey);
+  const appToken = localStorage.getItem('aicns_id_token');
+
+  const isLoggedIn =
+    localStorage.getItem(requiredKey) === 'true' || !!appToken;
+
+  const role = localStorage.getItem(roleKey) || (appToken ? 'admin' : null);
 
   if (!isLoggedIn) {
     return (

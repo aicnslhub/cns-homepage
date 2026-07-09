@@ -1,51 +1,54 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cognitoLogin, saveAuthTokens } from '../../services/cognitoAuth';
 
 const AppLogin = ({ isDarkMode, setIsDarkMode }) => {
   const navigate = useNavigate();
 
-  const [userId, setUserId] = useState('recorder');
-  const [password, setPassword] = useState('1234');
+  const [email, setEmail] = useState('test@example.com');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loadingTarget, setLoadingTarget] = useState('');
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    const trimmedUserId = userId.trim().toLowerCase();
-    const trimmedPassword = password.trim();
-
-    if (trimmedPassword !== '1234') {
-      setError('비밀번호가 올바르지 않습니다.');
+  const handleLogin = async (target) => {
+    if (!email.trim()) {
+      setError('이메일을 입력하세요.');
       return;
     }
 
-    if (trimmedUserId === 'admin') {
-      localStorage.setItem('cns_app_login', 'true');
-      localStorage.setItem('cns_app_role', 'admin');
+    if (!password) {
+      setError('비밀번호를 입력하세요.');
+      return;
+    }
 
-      // 예전 공용 role 제거
+    setLoadingTarget(target);
+    setError('');
+
+    try {
+      const tokens = await cognitoLogin(email, password);
+
+      saveAuthTokens(tokens);
+
+      localStorage.setItem('cns_app_login', 'true');
       localStorage.removeItem('cns_user_role');
 
-      navigate('/app/admin', { replace: true });
-      return;
-    }
+      if (target === 'admin') {
+        localStorage.setItem('cns_app_role', 'admin');
+        localStorage.setItem('cns_web_login', 'true');
+        localStorage.setItem('cns_web_role', 'admin');
 
-    if (trimmedUserId === 'recorder') {
-      localStorage.setItem('cns_app_login', 'true');
+        navigate('/app/admin', { replace: true });
+        return;
+      }
+
       localStorage.setItem('cns_app_role', 'recorder');
 
-      // 예전 공용 role 제거
-      localStorage.removeItem('cns_user_role');
-
       navigate('/app/record', { replace: true });
-      return;
+    } catch (err) {
+      setError(err.message || '로그인에 실패했습니다.');
+    } finally {
+      setLoadingTarget('');
     }
-
-    localStorage.removeItem('cns_app_login');
-    localStorage.removeItem('cns_app_role');
-    localStorage.removeItem('cns_user_role');
-
-    setError('앱 테스트 계정은 admin 또는 recorder 입니다.');
   };
 
   return (
@@ -67,7 +70,7 @@ const AppLogin = ({ isDarkMode, setIsDarkMode }) => {
                 : 'bg-white border-gray-300 text-gray-700'
             }`}
           >
-            {isDarkMode ? '🌙 앱 블랙' : '☀️ 앱 화이트'}
+            {isDarkMode ? '☀️ 앱 화이트' : '🌙 앱 블랙'}
           </button>
         </div>
 
@@ -89,30 +92,32 @@ const AppLogin = ({ isDarkMode, setIsDarkMode }) => {
 
             <p
               className={`mt-3 text-sm leading-relaxed ${
-                isDarkMode
-                  ? 'text-gray-400'
-                  : 'text-gray-500'
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
               }`}
             >
-              녹음 기능 또는 관리자 관제센터로 접속합니다.
+              Cognito 계정으로 로그인 후 녹음 화면 또는 AI 관제센터로 이동합니다.
             </p>
           </div>
 
           <form
-            onSubmit={handleLogin}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin('record');
+            }}
             className="space-y-5"
           >
             <div>
               <label className="block mb-2 text-sm font-bold">
-                앱 사용자 ID
+                이메일
               </label>
 
               <input
-                type="text"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder="recorder 또는 admin"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="test@example.com"
                 autoCapitalize="none"
+                autoComplete="username"
                 className={`w-full min-h-12 rounded-xl px-4 border outline-none text-base ${
                   isDarkMode
                     ? 'bg-black border-gray-700 text-white placeholder-gray-600 focus:border-green-500'
@@ -130,7 +135,8 @@ const AppLogin = ({ isDarkMode, setIsDarkMode }) => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="1234"
+                placeholder="비밀번호"
+                autoComplete="current-password"
                 className={`w-full min-h-12 rounded-xl px-4 border outline-none text-base ${
                   isDarkMode
                     ? 'bg-black border-gray-700 text-white placeholder-gray-600 focus:border-green-500'
@@ -147,9 +153,19 @@ const AppLogin = ({ isDarkMode, setIsDarkMode }) => {
 
             <button
               type="submit"
-              className="w-full min-h-14 rounded-xl bg-green-600 active:bg-green-800 text-white font-black text-base"
+              disabled={!!loadingTarget}
+              className="w-full min-h-14 rounded-xl bg-green-600 active:bg-green-800 disabled:opacity-60 text-white font-black text-base"
             >
-              앱 로그인
+              {loadingTarget === 'record' ? '로그인 중...' : '녹음 화면으로 로그인'}
+            </button>
+
+            <button
+              type="button"
+              disabled={!!loadingTarget}
+              onClick={() => handleLogin('admin')}
+              className="w-full min-h-14 rounded-xl bg-blue-600 active:bg-blue-800 disabled:opacity-60 text-white font-black text-base"
+            >
+              {loadingTarget === 'admin' ? '로그인 중...' : 'AI 관제센터로 로그인'}
             </button>
           </form>
 
@@ -160,9 +176,9 @@ const AppLogin = ({ isDarkMode, setIsDarkMode }) => {
                 : 'bg-gray-100 text-gray-500'
             }`}
           >
-            녹음 사용자: <b>recorder / 1234</b>
+            앱과 PC 웹은 같은 Cognito 계정을 사용합니다.
             <br />
-            관리자: <b>admin / 1234</b>
+            권한 분리는 다음 단계에서 DB 기준으로 처리합니다.
           </div>
         </section>
       </div>

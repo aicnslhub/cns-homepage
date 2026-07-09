@@ -1,31 +1,46 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cognitoLogin, saveAuthTokens } from '../services/cognitoAuth';
 
 const Login = ({ isDarkMode, setIsDarkMode }) => {
   const navigate = useNavigate();
 
-  const [userId, setUserId] = useState('admin');
-  const [password, setPassword] = useState('1234');
+  const [email, setEmail] = useState('test@example.com');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    const trimmedUserId = userId.trim().toLowerCase();
-    const trimmedPassword = password.trim();
-
-    if (trimmedUserId === '' && trimmedPassword === '') {
-      localStorage.setItem('cns_web_login', 'true');
-      localStorage.setItem('cns_web_role', 'admin');
-
-      // 예전 공용 role 제거
-      localStorage.removeItem('cns_user_role');
-
-      navigate('/admin', { replace: true });
+    if (!email.trim()) {
+      setError('이메일을 입력하세요.');
       return;
     }
 
-    setError('아이디 또는 비밀번호가 올바르지 않습니다.');
+    if (!password) {
+      setError('비밀번호를 입력하세요.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const tokens = await cognitoLogin(email, password);
+
+      saveAuthTokens(tokens);
+
+      localStorage.setItem('cns_web_login', 'true');
+      localStorage.setItem('cns_web_role', 'admin');
+      localStorage.removeItem('cns_user_role');
+
+      navigate('/admin', { replace: true });
+    } catch (err) {
+      setError(err.message || '로그인에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,7 +62,7 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
                 : 'bg-white border-gray-300 text-gray-700'
             }`}
           >
-            {isDarkMode ? '🌙 블랙 모드' : '☀️ 화이트 모드'}
+            {isDarkMode ? '☀️ 화이트 모드' : '🌙 블랙 모드'}
           </button>
         </div>
 
@@ -69,29 +84,24 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
 
             <p
               className={`mt-3 text-sm leading-relaxed ${
-                isDarkMode
-                  ? 'text-gray-400'
-                  : 'text-gray-500'
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
               }`}
             >
-              PC / 모바일 웹에서 관리자 관제센터로 접속합니다.
+              Cognito 계정으로 로그인 후 관리자 관제센터에 접속합니다.
             </p>
           </div>
 
-          <form
-            onSubmit={handleLogin}
-            className="space-y-5"
-          >
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block mb-2 text-sm font-bold">
-                관리자 ID
+                이메일
               </label>
 
               <input
-                type="text"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder="admin"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="test@example.com"
                 autoCapitalize="none"
                 autoComplete="username"
                 className={`w-full min-h-12 rounded-xl px-4 border outline-none text-base ${
@@ -111,7 +121,7 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="1234"
+                placeholder="비밀번호"
                 autoComplete="current-password"
                 className={`w-full min-h-12 rounded-xl px-4 border outline-none text-base ${
                   isDarkMode
@@ -129,9 +139,10 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
 
             <button
               type="submit"
-              className="w-full min-h-14 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-base transition"
+              disabled={loading}
+              className="w-full min-h-14 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 text-white font-black text-base transition"
             >
-              로그인
+              {loading ? '로그인 중...' : '로그인'}
             </button>
           </form>
 
@@ -142,9 +153,9 @@ const Login = ({ isDarkMode, setIsDarkMode }) => {
                 : 'bg-gray-100 text-gray-500'
             }`}
           >
-            임시 테스트 계정
+            PC 웹과 앱은 같은 Cognito 계정을 사용합니다.
             <br />
-            ID: <b>admin</b> / PW: <b>admin</b>
+            로그인 성공 시 <b>aicns_id_token</b>이 저장됩니다.
           </div>
         </section>
       </div>
