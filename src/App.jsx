@@ -12,6 +12,7 @@ import Products from './pages/Products';
 import Inquiry from './pages/Inquiry';
 
 import Login from './pages/Login';
+import Register from './pages/Register';
 
 import AppLogin from './pages/app/AppLogin';
 import AppRecorder from './pages/app/AppRecorder';
@@ -95,6 +96,17 @@ const App = () => {
         path="/login"
         element={
           <Login
+            isDarkMode={isDarkMode}
+            setIsDarkMode={setIsDarkMode}
+          />
+        }
+      />
+
+      {/* 회원가입 페이지 */}
+      <Route
+        path="/register"
+        element={
+          <Register
             isDarkMode={isDarkMode}
             setIsDarkMode={setIsDarkMode}
           />
@@ -228,15 +240,6 @@ const App = () => {
             <AdminReport
               mode="app"
               basePath="/app/admin"
-              isDarkMode={isDarkMode}
-              setIsDarkMode={setIsDarkMode}
-            />
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <Register
               isDarkMode={isDarkMode}
               setIsDarkMode={setIsDarkMode}
             />
