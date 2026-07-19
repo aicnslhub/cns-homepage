@@ -1,11 +1,11 @@
 import logoBlack from '../image/longb.png';
 import logoWhite from '../image/longw.png';
-
+import heroMain from '../image/aicnsl-ms1.png';
 
 export const IMAGES = {
   logoBlack,
   logoWhite,
-  heroBackground: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&auto=format&fit=crop&q=80',
+  heroBackground: heroMain,
   productDashboard: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
   aboutVision: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80',
   kioskImg: 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=800&auto=format&fit=crop&q=80',

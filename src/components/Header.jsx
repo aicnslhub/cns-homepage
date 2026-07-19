@@ -18,7 +18,7 @@ const Header = ({ isDarkMode, setIsDarkMode }) => {
             <img
               src={isDarkMode ? IMAGES.logoWhite : IMAGES.logoBlack}
               alt="AI CNS Logo"
-              className="h-9 md:h-10 w-auto object-contain"
+              className="h-5 md:h-6 w-auto object-contain"
             />
           </div>
           
