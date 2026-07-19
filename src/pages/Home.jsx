@@ -82,7 +82,7 @@ const Home = ({ isDarkMode }) => {
 
       <div className={`border-t pt-24 grid grid-cols-1 md:grid-cols-2 gap-12 items-center ${isDarkMode ? 'border-gray-900' : 'border-gray-200'}`}>
         <div className={`rounded-2xl overflow-hidden border shadow-lg bg-gray-900/10 p-2 order-last md:order-first ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}>
-          <img src={IMAGES.kioskImg} alt="Kiosk Deployment" className="w-full h-full object-cover rounded-xl aspect-video" />
+          <img src={IMAGES.kioskImg} alt="Kiosk Deployment" className="w-full h-auto object-contain rounded-xl" />
         </div>
         <div className="space-y-6">
           <div className="text-xs font-bold text-purple-600 uppercase tracking-wider">02 / PUBLIC WELFARE & DIGITAL ANTIVIRUS</div>
