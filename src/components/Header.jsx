@@ -16,7 +16,7 @@ const Header = ({ isDarkMode, setIsDarkMode }) => {
             onClick={() => navigate('/home')}
           >
             <img
-              src={IMAGES.logo}
+              src={isDarkMode ? IMAGES.logoWhite : IMAGES.logoBlack}
               alt="AI CNS Logo"
               className="h-9 md:h-10 w-auto object-contain"
             />
