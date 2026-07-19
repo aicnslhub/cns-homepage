@@ -6,19 +6,44 @@ const Home = ({ isDarkMode }) => {
 
   return (
     <div className="tab-page space-y-36 pb-32">
-      <div className={`relative rounded-3xl overflow-hidden border p-8 md:p-24 text-center space-y-8 shadow-xl reveal-1 ${isDarkMode ? 'border-gray-800/80 bg-gradient-to-b from-gray-900/80 via-gray-900/30 to-transparent' : 'border-gray-200 bg-white'}`}>
-        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: `url(${IMAGES.heroBackground})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-        <div className="inline-block bg-blue-500/10 border border-blue-500/20 text-blue-600 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase">⚡ CONNECTING HUMAN MINDS WITH EDGE INTELLIGENCE</div>
-        <h1 className={`text-2xl md:text-5xl font-black tracking-tight max-w-4xl mx-auto leading-tight md:leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-          텍스트를 넘어 목소리와 마음의 깊이까지,<br />
-          <span className={isDarkMode ? 'bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent' : 'text-blue-600'}>AI 디지털 파수꾼 (CNS)</span>
-        </h1>
-        <p className={`max-w-3xl mx-auto text-xs md:text-base leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          단순 텍스트 변환과 감정 분석을 넘어 발화 리듬, 정밀 침묵 태깅, 실시간 비언어 표정 수치화 기술을 엮었습니다. 다문화 가정, 언어 표현 취약 계층의 심리 건강 상태와 고립 위험 징후를 조기에 관제하는 혁신적인 다중 다중모달 하이브리드 인프라 솔루션입니다.
-        </p>
-        <div className="flex justify-center space-x-4 pt-4">
-          <button onClick={() => navigate('/inquiry')} className="px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs md:text-sm tracking-wide shadow-md transition duration-200">도입 문의 및 PoC 신청하기</button>
-          <button onClick={() => navigate('/products')} className={`px-6 py-4 border rounded-xl font-bold text-xs md:text-sm tracking-wide transition duration-200 ${isDarkMode ? 'bg-gray-900 border-gray-800 text-gray-300 hover:bg-gray-800' : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200'}`}>기술 정의 규격서 열람</button>
+      <div className={`relative rounded-3xl overflow-hidden border p-8 md:p-24 text-center shadow-xl reveal-1 ${isDarkMode? 'border-gray-800/80 bg-gray-900': 'border-gray-200 bg-white'}`}>
+        <div className="absolute inset-0 z-0 pointer-events-none"style={{backgroundImage: `url(${IMAGES.heroBackground})`,backgroundSize: 'cover',backgroundPosition: 'center',}}/>
+        <div className={`absolute inset-0 z-0 pointer-events-none ${isDarkMode ? 'bg-black/45' : 'bg-white/35'}`}/>
+        <div className="relative z-10 space-y-8">
+          <div className="inline-block bg-blue-500/10 border border-blue-500/20 text-blue-600 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase">
+              ⚡ CONNECTING HUMAN MINDS WITH EDGE INTELLIGENCE
+          </div>
+
+          <h1 className={`text-2xl md:text-5xl font-black tracking-tight max-w-4xl mx-auto leading-tight md:leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            텍스트를 넘어 목소리와 마음의 깊이까지,<br />
+            <span className={isDarkMode ? 'bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent' : 'text-blue-600'}>
+              AI 디지털 파수꾼 (CNS)
+            </span>
+          </h1>
+
+          <p className={`max-w-3xl mx-auto text-xs md:text-base leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            단순 텍스트 변환과 감정 분석을 넘어 발화 리듬, 정밀 침묵 태깅, 실시간 비언어 표정 수치화 기술을 엮었습니다. 다문화 가정, 언어 표현 취약 계층의 심리 건강 상태와 고립 위험 징후를 조기에 관제하는 혁신적인 다중 다중모달 하이브리드 인프라 솔루션입니다.
+            </p>
+
+          <div className="flex justify-center space-x-4 pt-4">
+            <button
+              onClick={() => navigate('/inquiry')}
+              className="px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs md:text-sm tracking-wide shadow-md transition duration-200"
+            >
+              도입 문의 및 PoC 신청하기
+            </button>
+
+            <button
+              onClick={() => navigate('/products')}
+              className={`px-6 py-4 border rounded-xl font-bold text-xs md:text-sm tracking-wide transition duration-200 ${
+                isDarkMode
+                  ? 'bg-gray-900/80 border-gray-800 text-gray-300 hover:bg-gray-800'
+                  : 'bg-white/70 border-gray-300 text-gray-700 hover:bg-white'
+              }`}
+            >
+               기술 정의 규격서 열람
+            </button>
+          </div>
         </div>
       </div>
 
